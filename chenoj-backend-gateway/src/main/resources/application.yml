@@ -4,4 +4,23 @@ spring:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
-
+    gateway:
+      routes:
+        - id: chenoj-backend-user-service
+          uri: lb://chenoj-backend-user-service
+          predicates:
+            - Path=/api/user/**
+        - id: chenoj-backend-judge-service
+          uri: lb://chenoj-backend-judge-service
+          predicates:
+            - Path=/api/judge/**
+        - id: chenoj-backend-question-service
+          uri: lb://chenoj-backend-question-service
+          predicates:
+            - Path=/api/question/**
+  application:
+    name: chenoj-backend-gateway
+  main:
+    web-application-type: reactive
+server:
+  port: 8101
