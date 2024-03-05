@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
  */
 @FeignClient(name = "chenoj-backend-judge-service", path = "/api/judge/inner")
 public interface JudgeFeignClient {
-//judgeService.doJudge(questionSubmitId)
 
     /**
      * @param questionSubmitId: 题目提交编号

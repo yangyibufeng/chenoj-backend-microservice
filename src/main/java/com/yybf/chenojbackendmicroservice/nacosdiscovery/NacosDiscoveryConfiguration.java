@@ -23,6 +23,7 @@ import org.springframework.context.annotation.Configuration;
  * @author <a href="mailto:chenxilzx1@gmail.com">theonefx</a>
  */
 @EnableDiscoveryClient
+@EnableFeignClients(basePackages = {"com.yybf.chenojbackendserviceclient.service"})
 @Configuration
 public class NacosDiscoveryConfiguration {
 }
