@@ -16,6 +16,7 @@ import com.yybf.chenojbackendmodel.entity.User;
 import com.yybf.chenojbackendmodel.enums.QuestionSubmitLanguageEnum;
 import com.yybf.chenojbackendmodel.enums.QuestionSubmitStatusEnum;
 import com.yybf.chenojbackendmodel.vo.QuestionSubmitVO;
+import com.yybf.chenojbackendquestionservice.RabbitMQ.MyMessageProducer;
 import com.yybf.chenojbackendquestionservice.mapper.QuestionSubmitMapper;
 import com.yybf.chenojbackendquestionservice.service.QuestionService;
 import com.yybf.chenojbackendquestionservice.service.QuestionSubmitService;
@@ -28,7 +29,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 /**
@@ -48,6 +48,9 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
     @Resource
     @Lazy // 设置懒加载，因为QuestionSubmitServiceImpl与JudgeServiceImpl相互依赖
     private JudgeFeignClient judgeFeignClient;
+
+    @Resource
+    private MyMessageProducer myMessageProducer; // 引入自定义的消息队列生产者
 
     /**
      * 提交题目
@@ -88,10 +91,12 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "题目数据插入失败");
         }
         long questionSubmitId = questionSubmit.getId();
+        // 将题目提交id发往消息队列，不需要异步
+        myMessageProducer.sendMessage("code_change","my_routingKey",String.valueOf(questionSubmitId));
         // todo 执行判题服务
-        CompletableFuture.runAsync(() -> {
-            judgeFeignClient.doJudge(questionSubmitId);
-        });
+//        CompletableFuture.runAsync(() -> {
+//            judgeFeignClient.doJudge(questionSubmitId);
+//        });
 
 
         return questionSubmitId;
