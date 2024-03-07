@@ -1,5 +1,6 @@
 package com.yybf.chenojbackendjudgeservice;
 
+import com.yybf.chenojbackendjudgeservice.RabbitMQ.InitRabbitMQ;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
