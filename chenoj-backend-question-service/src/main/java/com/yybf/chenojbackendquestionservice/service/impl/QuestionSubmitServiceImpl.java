@@ -92,7 +92,7 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         }
         long questionSubmitId = questionSubmit.getId();
         // 将题目提交id发往消息队列，不需要异步
-        myMessageProducer.sendMessage("code_change","my_routingKey",String.valueOf(questionSubmitId));
+        myMessageProducer.sendMessage("code_exchange","my_routingKey",String.valueOf(questionSubmitId));
         // todo 执行判题服务
 //        CompletableFuture.runAsync(() -> {
 //            judgeFeignClient.doJudge(questionSubmitId);

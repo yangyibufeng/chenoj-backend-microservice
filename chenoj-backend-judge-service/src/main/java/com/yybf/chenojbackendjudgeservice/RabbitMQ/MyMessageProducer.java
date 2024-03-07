@@ -39,7 +39,7 @@ public class MyMessageProducer {
             judgeService.doJudge(questionSubmitId);
             channel.basicAck(deliveryTag, false);
         } catch (IOException e) {
-            channel.basicNack(deliveryTag,false,true); // true：表示接收失败后重新处理
+            channel.basicNack(deliveryTag,false,false); // 最后一个true：表示接收失败后重新处理
         }
     }
 
