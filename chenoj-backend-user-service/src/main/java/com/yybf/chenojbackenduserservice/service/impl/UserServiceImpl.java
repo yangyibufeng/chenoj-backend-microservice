@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.yybf.chenojbackendcommon.common.ErrorCode;
 import com.yybf.chenojbackendcommon.constant.CommonConstant;
 import com.yybf.chenojbackendcommon.exception.BusinessException;
+import com.yybf.chenojbackendcommon.utils.JwtUtils;
 import com.yybf.chenojbackendcommon.utils.SqlUtils;
 import com.yybf.chenojbackendmodel.dto.user.UserQueryRequest;
 import com.yybf.chenojbackendmodel.entity.User;
@@ -22,7 +23,9 @@ import org.springframework.util.DigestUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.yybf.chenojbackendcommon.constant.UserConstant.USER_LOGIN_STATE;
@@ -104,9 +107,28 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             log.info("user login failed, userAccount cannot match userPassword");
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户不存在或密码错误");
         }
-        // 3. 记录用户的登录态
+
+        // 3.token扩展 - 将用户的信息保存到token中
+        //  1. 获取用户信息（id，角色，账号）
+        Map<String, Object> userMap = new HashMap<>();
+        userMap.put("userId", user.getId());
+        userMap.put("userRole", user.getUserRole());
+        userMap.put("userAccount", user.getUserAccount());
+
+        log.info("user login success, userMap:{}", userMap);
+        //  2. 生成token
+        String token = JwtUtils.generateToken(userMap);
+
+        log.info("user login success, token:{}", token);
+        // 4. 记录用户的登录态
         request.getSession().setAttribute(USER_LOGIN_STATE, user);
-        return this.getLoginUserVO(user);
+        LoginUserVO loginUserVO = this.getLoginUserVO(user);
+
+        // 5. 添加返回值
+        loginUserVO.setToken(token);
+
+        log.info("user login success, loginUserVO:{}", loginUserVO);
+        return loginUserVO;
     }
 
 

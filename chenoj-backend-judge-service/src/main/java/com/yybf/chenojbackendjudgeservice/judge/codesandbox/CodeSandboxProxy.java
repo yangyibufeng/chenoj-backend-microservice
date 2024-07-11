@@ -13,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CodeSandboxProxy implements CodeSandbox {
 
-    // 给原本的就扣增加功能，所以作为一个代理类原本接口的功能要实现，并且原本接口所需要的参数也都要获取
+    // 给原本的接口增加功能，所以作为一个代理类原本接口的功能要实现，并且原本接口所需要的参数也都要获取
     private final CodeSandbox codeSandbox;
 
     // 也可以使用Lombok的 @AllArgsConstructor

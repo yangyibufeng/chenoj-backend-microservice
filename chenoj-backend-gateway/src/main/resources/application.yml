@@ -36,3 +36,6 @@ knife4j:
       enabled: true
       # ④ 第四行配置，聚合子服务全部为Swagger2规范的文档
       version: swagger2
+gateway:
+  excludedUrls: # 放行的url
+    /api/user/get/login,/api/user/logout,/user/register,/zhuye,/api/user/login,user/getLoginUser,/api/user/register

@@ -9,7 +9,6 @@ import org.springframework.core.io.buffer.DataBufferFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
-import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -21,7 +20,7 @@ import java.nio.charset.StandardCharsets;
  * @author yangyibufeng
  * @date 2024/3/6
  */
-@Component
+//@Component
 public class GlobalAuthFilter implements GlobalFilter, Ordered {
 
     private AntPathMatcher antPathMatcher = new AntPathMatcher();
@@ -31,7 +30,7 @@ public class GlobalAuthFilter implements GlobalFilter, Ordered {
         ServerHttpRequest serverHttpRequest = exchange.getRequest();
         String path = serverHttpRequest.getURI().getPath();
         // 通过判断路径中是否包含inner，只允许内部访问
-        // 这里会过滤所有讲过网关的请求
+        // 这里会过滤所有进网关的请求
         if (antPathMatcher.match("/**/inner/**", path)) {
             ServerHttpResponse response = exchange.getResponse();
             // 设置请求的响应码
