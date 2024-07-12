@@ -19,7 +19,7 @@ public enum QuestionSubmitStatusEnum {
 
     SUCCEED("成功", 2),
 
-    FAILED("等待中", 3);
+    FAILED("失败", 3);
 
     private final String text;
 

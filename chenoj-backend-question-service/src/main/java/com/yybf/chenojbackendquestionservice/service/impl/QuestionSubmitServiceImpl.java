@@ -75,6 +75,20 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         if (question == null) {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
         }
+
+        // 设置提交数
+        // 这里对获取的题目对象进行加锁操作，可能加锁范围有点扩大，后面应该对其进行优化
+        Integer submitNum = question.getSubmitNum();
+        synchronized (question){
+            Question updateQuestion = new Question();
+            updateQuestion.setSubmitNum(submitNum + 1);
+            updateQuestion.setId(questionId);
+            boolean success = questionService.updateById(updateQuestion);
+            if(!success){
+                throw new BusinessException(ErrorCode.SYSTEM_ERROR, "题目数据更新失败");
+            }
+        }
+
         // 是否已提交题目
         long userId = loginUser.getId();
         // 从题目提交信息中获取相应的数据

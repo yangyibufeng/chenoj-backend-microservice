@@ -15,6 +15,7 @@ import com.yybf.chenojbackendmodel.entity.Question;
 import com.yybf.chenojbackendmodel.entity.QuestionSubmit;
 import com.yybf.chenojbackendmodel.enums.QuestionSubmitStatusEnum;
 import com.yybf.chenojbackendserviceclient.service.QuestionFeignClient;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
  * @date 2024/2/15
  */
 @Service
+@Slf4j
 public class JudgeServiceImpl implements JudgeService {
     // 用于查询题目信息
     @Resource
@@ -45,16 +47,24 @@ public class JudgeServiceImpl implements JudgeService {
     @Override
     public QuestionSubmit doJudge(long questionSubmitId) {
         // 1. 根据传入的题目提交id，获取到对应的题目、提交信息（包括代码、编程语言等）
+
+        log.info("questionSubmitId = {}", questionSubmitId);
+
         QuestionSubmit questionSubmit = questionFeignClient.getQuestionSubmitById(questionSubmitId);
         if (questionSubmit == null) {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "提交信息不存在");
         }
+
+        log.info("questionSubmit = {}", questionSubmit);
+
         // 获取题目id，判断题目信息存在状态
         Long questionId = questionSubmit.getQuestionId();
         Question question = questionFeignClient.getQuestionById(questionId);
         if (question == null) {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "题目信息不存在");
         }
+
+        log.info("开始执行判题 , questionSubmit = {} , question = {}",questionSubmit, question);
         // 判断题目判题状态
         Integer status = questionSubmit.getStatus();
         if (!Objects.equals(status, QuestionSubmitStatusEnum.WAITING.getValue())) {

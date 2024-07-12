@@ -68,8 +68,8 @@ mybatis-plus:
 
 # 代码沙箱配置
 codesandbox:
-  type: remote
-#  type: example
+#  type: remote
+  type: example
 # 开启接口文档配置
 knife4j:
   enable: true
