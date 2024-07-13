@@ -1,6 +1,6 @@
 package com.yybf.chenojbackendjudgeservice;
 
-import com.yybf.chenojbackendjudgeservice.RabbitMQ.InitRabbitMQ;
+import com.yybf.chenojbackendjudgeservice.RabbitMQ.CodeMqInitMain;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -19,7 +19,7 @@ public class ChenojBackendJudgeServiceApplication {
 
     public static void main(String[] args) {
         // 初始化消息队列
-        InitRabbitMQ.doInit();
+        CodeMqInitMain.doInit();
         SpringApplication.run(ChenojBackendJudgeServiceApplication.class, args);
     }
 

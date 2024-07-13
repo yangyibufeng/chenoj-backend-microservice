@@ -75,7 +75,7 @@ public class JudgeServiceImpl implements JudgeService {
         QuestionSubmit questionSubmitUpdateStatus = new QuestionSubmit();
         questionSubmitUpdateStatus.setId(questionSubmitId);
         questionSubmitUpdateStatus.setStatus(QuestionSubmitStatusEnum.RUNNING.getValue());
-        boolean update = questionFeignClient.updateQuestionSubmitById(questionSubmitUpdateStatus);
+        boolean update = questionFeignClient.updateQuestionSubmit(questionSubmitUpdateStatus);
         if (!update) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "题目状态更新错误");
         }
@@ -120,7 +120,7 @@ public class JudgeServiceImpl implements JudgeService {
         // 仅表示判题已完成，与题目是否通过无关
         questionSubmitUpdateStatus.setStatus(QuestionSubmitStatusEnum.SUCCEED.getValue());
         questionSubmitUpdateStatus.setJudgeInfo(JSONUtil.toJsonStr(judgeInfo));
-        update = questionFeignClient.updateQuestionSubmitById(questionSubmitUpdateStatus);
+        update = questionFeignClient.updateQuestionSubmit(questionSubmitUpdateStatus);
         if (!update) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "题目状态更新错误");
         }

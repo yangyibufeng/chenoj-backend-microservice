@@ -31,6 +31,9 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.yybf.chenojbackendcommon.constant.MqConstant.CODE_EXCHANGE_NAME;
+import static com.yybf.chenojbackendcommon.constant.MqConstant.CODE_ROUTING_KEY;
+
 /**
  * @author Lenovo
  * @description 针对表【question_submit(提交题目)】的数据库操作Service实现
@@ -79,12 +82,12 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         // 设置提交数
         // 这里对获取的题目对象进行加锁操作，可能加锁范围有点扩大，后面应该对其进行优化
         Integer submitNum = question.getSubmitNum();
-        synchronized (question){
+        synchronized (question) {
             Question updateQuestion = new Question();
             updateQuestion.setSubmitNum(submitNum + 1);
             updateQuestion.setId(questionId);
             boolean success = questionService.updateById(updateQuestion);
-            if(!success){
+            if (!success) {
                 throw new BusinessException(ErrorCode.SYSTEM_ERROR, "题目数据更新失败");
             }
         }
@@ -106,7 +109,7 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         }
         long questionSubmitId = questionSubmit.getId();
         // 将题目提交id发往消息队列，不需要异步
-        myMessageProducer.sendMessage("code_exchange","my_routingKey",String.valueOf(questionSubmitId));
+        myMessageProducer.sendMessage(CODE_EXCHANGE_NAME, CODE_ROUTING_KEY, String.valueOf(questionSubmitId));
         // todo 执行判题服务
 //        CompletableFuture.runAsync(() -> {
 //            judgeFeignClient.doJudge(questionSubmitId);

@@ -35,7 +35,7 @@ public class MyMessageConsumer {
     /**
      * @return null:
      * @author yangyibufeng
-     * @description 向消息队列发送消息（消费者端）
+     * @description 向消息队列获取消息（消费者端）
      * @date 2024/3/6 21:23
      */
     // 指定程序监听的消息队列和确认机制

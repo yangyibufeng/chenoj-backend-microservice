@@ -41,7 +41,7 @@ public interface QuestionFeignClient {
      * @date 2024/7/12 14:49
      */
     @PostMapping("/question_submit/update")
-    boolean updateQuestionSubmitById(@RequestBody QuestionSubmit questionSubmit);
+    boolean updateQuestionSubmit(@RequestBody QuestionSubmit questionSubmit);
 
     /**
      * 更新题目信息
