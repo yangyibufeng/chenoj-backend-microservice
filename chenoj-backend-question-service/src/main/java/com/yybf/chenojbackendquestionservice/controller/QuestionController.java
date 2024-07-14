@@ -18,6 +18,7 @@ import com.yybf.chenojbackendmodel.entity.QuestionSubmit;
 import com.yybf.chenojbackendmodel.entity.User;
 import com.yybf.chenojbackendmodel.vo.QuestionSubmitVO;
 import com.yybf.chenojbackendmodel.vo.QuestionVO;
+import com.yybf.chenojbackendquestionservice.manage.RedissonLimiter;
 import com.yybf.chenojbackendquestionservice.service.QuestionService;
 import com.yybf.chenojbackendquestionservice.service.QuestionSubmitService;
 import com.yybf.chenojbackendserviceclient.service.UserFeignClient;
@@ -47,6 +48,9 @@ public class QuestionController {
 
     @Resource
     private QuestionSubmitService questionSubmitService;
+
+    @Resource
+    private RedissonLimiter redissonLimiter;  // 用来提供限流功能
 
     // region 增删改查
 
@@ -309,8 +313,15 @@ public class QuestionController {
         if (questionSubmitAddRequest == null || questionSubmitAddRequest.getQuestionId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        //
+        // 登录才能提交
         final User loginUser = userFeignClient.getLoginUser(request);
+
+        // 限流
+        boolean rateLimit = redissonLimiter.doRateLimit("doQuestionSubmit_" + loginUser.getId());
+        if (!rateLimit) {
+            return ResultUtils.error(ErrorCode.TOO_MANY_REQUEST, "提交过于频繁,请稍后重试");
+        }
+
         long questionSubmitId = questionSubmitService.doQuestionSubmit(questionSubmitAddRequest, loginUser);
         return ResultUtils.success(questionSubmitId);
     }
