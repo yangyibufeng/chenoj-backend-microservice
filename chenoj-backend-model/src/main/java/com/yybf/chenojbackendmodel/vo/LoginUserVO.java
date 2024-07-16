@@ -9,7 +9,6 @@ import java.util.Date;
  * 已登录用户视图（脱敏）
  *
  * @author 杨毅不逢
- 
  **/
 @Data
 public class LoginUserVO implements Serializable {
@@ -60,4 +59,14 @@ public class LoginUserVO implements Serializable {
      * 用户账号
      */
     private String userAccount;
+
+
+    /**
+     * 用户手机号
+     */
+    private String userPhone;
+    /**
+     * 用户邮箱
+     */
+    private String userEmail;
 }

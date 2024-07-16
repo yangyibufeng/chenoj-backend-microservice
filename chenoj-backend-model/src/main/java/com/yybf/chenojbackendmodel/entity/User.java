@@ -31,13 +31,13 @@ public class User implements Serializable {
      */
     private String userPassword;
     /**
-     * 开放平台id
+     * 用户手机号
      */
-    private String unionId;
+    private String userPhone;
     /**
-     * 公众号openId
+     * 用户邮箱
      */
-    private String mpOpenId;
+    private String userEmail;
     /**
      * 用户昵称
      */
