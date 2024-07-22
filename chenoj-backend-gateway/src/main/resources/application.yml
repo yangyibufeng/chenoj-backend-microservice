@@ -38,4 +38,4 @@ knife4j:
       version: swagger2
 gateway:
   excludedUrls: # 放行的url
-    /api/user/get/login,/api/user/logout,/user/register,/zhuye,/api/user/login,user/getLoginUser,/api/user/register
+    /api/user/get/login,/api/user/logout,/user/register,/api/**/api-docs,/api/user/login,/user/getLoginUser,/api/user/register

@@ -14,6 +14,7 @@ import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
@@ -34,13 +35,23 @@ public class AuthFilter implements GlobalFilter, Ordered {
     @Value("#{'${gateway.excludedUrls}'.split(',')}")
     private List<String> excludedUrls; //配置不需要校验的链接
 
+    // 创建一个AntPathMatcher对象，可以允许路径通过通配符进行比较
+    private AntPathMatcher pathMatcher = new AntPathMatcher();
+
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         // 1. 获取请求路径, 判断是否放行
         String requestPath = exchange.getRequest().getPath().value();
-        if (excludedUrls.contains(requestPath)) { // 如果属于放行的路径，直接放行
-            return chain.filter(exchange);
+        log.info("requestPath:{}", requestPath);
+        for (String pattern : excludedUrls) {
+            if (pathMatcher.match(pattern, requestPath)) {
+                log.info("放行规则:{}", pattern);
+                return chain.filter(exchange);
+            }
         }
+//        if (excludedUrls.contains(requestPath)) { // 如果属于放行的路径，直接放行
+//            return chain.filter(exchange);
+//        }
 
         // 2. 获取token，并判断是否有效
         String token = exchange.getRequest().getHeaders().getFirst("Authorization");
