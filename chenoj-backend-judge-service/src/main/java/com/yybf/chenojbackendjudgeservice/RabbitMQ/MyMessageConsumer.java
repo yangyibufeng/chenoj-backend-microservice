@@ -21,6 +21,8 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import java.io.IOException;
 
+import static com.yybf.chenojbackendcommon.constant.MqConstant.CODE_QUEUE;
+
 /**
  * @author yangyibufeng
  * @date 2024/3/6
@@ -43,13 +45,14 @@ public class MyMessageConsumer {
      */
     // 指定程序监听的消息队列和确认机制
     @SneakyThrows
-    @RabbitListener(queues = {"code_queue"}, ackMode = "MANUAL", concurrency = "2") // MANUAL 表示从消息队列中拿到消息后需要手动确认收到（可操作性强）
+    @RabbitListener(queues = {CODE_QUEUE}, ackMode = "MANUAL", concurrency = "2") // MANUAL 表示从消息队列中拿到消息后需要手动确认收到（可操作性强）
     public void receiveMessage(String message, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) long deliveryTag) {
         log.info("receiveMessage message = {}", message);
         long questionSubmitId = Long.parseLong(message);
 
         if(message == null){
             // 如果消息为空，则不进行处理，直接抛出异常
+            channel.basicNack(deliveryTag, false, false);
             throw new BusinessException(ErrorCode.NULL_ERROR, "消息为空");
         }
         // 开始统计题目的通过数
@@ -69,7 +72,8 @@ public class MyMessageConsumer {
             }
 
             // 从判题信息获取题目状态，只有当判题信息为ACCEPTED时，才更新题目的通过数
-            if (judgeInfo.getMessage().equals(JudgeInfoMessageEnum.ACCEPTED.getValue())){
+            String judgeResult = judgeInfo.getMessage();
+            if (judgeResult.equals(JudgeInfoMessageEnum.ACCEPTED.getValue())){
 
                 // 如果答案通过,开始更新题目的通过数
                 log.info("更新题目通过数,提交的信息:" + message);
@@ -98,6 +102,10 @@ public class MyMessageConsumer {
                         throw new BusinessException(ErrorCode.OPERATION_ERROR, "更新题目通过数失败");
                     }
                 }
+            }else{
+                // 直接报错,抛出异常
+                channel.basicNack(deliveryTag, false, false);
+                throw new BusinessException(ErrorCode.OPERATION_ERROR, judgeResult);
             }
 
             // 手动确认消息
