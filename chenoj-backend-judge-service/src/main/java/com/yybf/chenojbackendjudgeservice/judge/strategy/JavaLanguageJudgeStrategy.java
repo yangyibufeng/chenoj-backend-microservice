@@ -6,6 +6,7 @@ import com.yybf.chenojbackendmodel.dto.question.JudgeCase;
 import com.yybf.chenojbackendmodel.dto.question.JudgeConfig;
 import com.yybf.chenojbackendmodel.entity.Question;
 import com.yybf.chenojbackendmodel.enums.JudgeInfoMessageEnum;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -16,7 +17,10 @@ import java.util.Objects;
  * 执行Java语言程序的判题策略
  * @date 2024/2/16
  */
+@Slf4j
 public class JavaLanguageJudgeStrategy implements JudgeStrategy {
+
+    public static final long KILO_BYTE = 1024 * 1024L;
 
     /**
      * @param judgeContext:
@@ -57,12 +61,14 @@ public class JavaLanguageJudgeStrategy implements JudgeStrategy {
         long JAVA_PROGRAM_TIME_COST = 100000L;
         usingTime -= JAVA_PROGRAM_TIME_COST;
 
-        Long memoryLimit = judgeConfig.getMemoryLimit();
+        Long memoryLimit = judgeConfig.getMemoryLimit() * KILO_BYTE;
         Long timeLimit = judgeConfig.getTimeLimit();
         if (usingMemory != null && usingMemory > memoryLimit) {
+            log.error("Memory Exceeded，usingMemory = {},memoryLimit = {}",usingMemory,memoryLimit);
             return setJudgeResult(judgeInfoResponse, JudgeInfoMessageEnum.MEMORY_LIMIT_EXCEEDED);
         }
         if (usingTime != null && usingTime > timeLimit) {
+            log.error("Time Exceeded，usingTime = {},timeLimit = {}",usingTime,timeLimit);
             return setJudgeResult(judgeInfoResponse, JudgeInfoMessageEnum.TIME_LIMIT_EXCEEDED);
         }
 

@@ -48,10 +48,12 @@ public class CodeMqInitMain {
             log.error("消息队列启动失败");
             e.printStackTrace();
         }
+        return;
     }
 
     public static void main(String[] args) {
         doInit();
+        return ;
     }
 
 }
